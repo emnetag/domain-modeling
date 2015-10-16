@@ -67,7 +67,7 @@ struct Money {
     }
 }
 
-print("Money Test cases ")
+print("Money test cases...\n")
 var wallet = Money(amount: 20, currency: Currency.USD)
 
 print("Created Money in \(wallet.currency) with \(wallet.getTotal()) in it.\n")
@@ -89,6 +89,9 @@ print("I still have \(wallet.getTotal()) US Dollars.\n")
 
 wallet.convert(type: .CAN)
 print("In Canadian dollars, I have \(wallet.getTotal()) dollars.\n")
+
+wallet.subtract(amount: 50, currency: .CAN)
+print("Spent 50 CAN, now I have \(wallet.getTotal()) CAN.\n")
 
 /*
  * JOB class
@@ -176,10 +179,12 @@ print("Testing Person class...\n")
 
 var president = Person(first: "Brack", last: "Obama", age: 54, job: Job(jobTitle: "President", jobSalary: 400000, hourly: false))
 var firstLady = Person(first: "Michelle", last: "Obama", age: 51, job: Job(jobTitle: "First Lady", jobSalary: 300000, hourly: false))
+var malia = Person(first: "Malia", last: "Obama", age: 18)
+
 president.spouse = firstLady
 firstLady.spouse = president
 print("\(president.toString())\n")
-print("\(firstLady.toString())\n")
+print("\(firstLady.toString())\n\n\n")
 
 
 /*
@@ -187,14 +192,20 @@ print("\(firstLady.toString())\n")
  */
 
 class famClass {
-    var fam : [Person]
+    var fam : [Person] = []
     
-    init(fam: [Person]) {
-        self.fam = fam
+    init?(fam: [Person]) {
+        for person in fam {
+            if person.age > 21 {
+                self.fam = fam
+                return
+            }
+        }
+        return nil
     }
     
-    func householdIncome() -> Double? {
-        var total : Double = 0
+    func householdIncome() -> Double {
+        var total : Double = 0.0
         for person in self.fam {
             if let employed = person.job {
                 if (employed.hourly) {
@@ -209,16 +220,34 @@ class famClass {
     
     func haveChild(first f: String, last l: String) -> Void {
         let kid = Person(first: f, last: l, age: 0)
-        
-        for person in fam {
-            if (person.age > 21) {
-                fam.append(kid)
-                break
-            }
-        }
-        print("No member is over the age of 21.\n")
+        self.fam.append(kid)
     }
 }
+
+
+print("Testing Fam class...\n")
+var firstFam = famClass(fam: [president, firstLady, malia])
+
+print("The first family makes \(firstFam!.householdIncome()) per year.\n")
+
+var illegalFam = famClass(fam: [Person(first: "James", last: "Jones", age: 12)])
+print("Creating a family of one 12 year old, James...\n")
+
+if illegalFam != nil {
+    print("Legal family.\n")
+} else {
+    print("Illegal family.\n")
+}
+
+var legalFam = famClass(fam: [Person(first: "William", last: "Joseph", age: 23)])
+print("Creating a family of one 23 year old, William...\n")
+
+if legalFam != nil {
+    print("Legal family.\n")
+} else {
+    print("Illegal family.\n")
+}
+
 
 
 
