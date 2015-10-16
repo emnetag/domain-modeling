@@ -90,13 +90,135 @@ print("I still have \(wallet.getTotal()) US Dollars.\n")
 wallet.convert(type: .CAN)
 print("In Canadian dollars, I have \(wallet.getTotal()) dollars.\n")
 
+/*
+ * JOB class
+ */
+
+class Job {
+    
+    var title : String
+    
+    var salary : Double
+    
+    var hourly : Bool
+    
+    init(jobTitle : String, jobSalary : Double, hourly: Bool) {
+        self.title = jobTitle
+        self.salary = jobSalary
+        self.hourly = hourly
+    }
+    
+    func calculateIncome(hours h : Double = 0.0) -> Double {
+        if (hourly) {
+            return self.salary * h
+        } else {
+            return self.salary
+        }
+    }
+    
+    func raise(percentage: Double) -> Void {
+        self.salary *= 1 + (percentage / 100)
+    }
+}
+
+print("\n")
+print("Testing Job class...\n")
+
+var job = Job(jobTitle: "Engineer", jobSalary: 90000, hourly: false)
+
+print("This engineer makes \(job.calculateIncome()) annually.\n")
+
+job.raise(15)
+print("Let's give him a 15% raise. He now makes \(job.calculateIncome()).\n")
+
+var hourlyEmp = Job(jobTitle: "Waitress", jobSalary: 15, hourly: true)
+print("A person that earns $15 an hour, makes roughly \(hourlyEmp.calculateIncome(hours: 2000)) in a year.\n\n\n")
+
+/*
+ * Person class
+ */
+class Person {
+    var firstName : String
+    var lastName : String
+    var job : Job?
+    var age : Int
+    weak var spouse : Person?
+    
+    init(first : String, last: String, age: Int, job: Job? = nil, spouse: Person? = nil) {
+        self.firstName = first
+        self.lastName  = last
+        self.age = age
+        
+        // Cannot get married before age 18
+        if age < 18 {
+            self.spouse = nil
+        } else {
+            self.spouse = spouse
+        }
+        
+        // Cannot have a job before age 16
+        if age < 16 {
+            self.job = nil
+        } else {
+            self.job = job
+        }
+        
+    }
+    
+    func toString() -> String {
+        let position = self.job != nil ? self.job!.title : "unemployed"
+        let spouseInfo = self.spouse != nil ? "\(self.spouse!.firstName) \(self.spouse!.lastName)" : "not married"
+        let salary = self.job != nil ? self.job!.calculateIncome() : 0.0
+        return "\(self.firstName) \(self.lastName)\nAge: \(self.age) years\nSalary: \(salary) \nJob: \(position)\nSpouse:\(spouseInfo)"
+    }
+}
+print("Testing Person class...\n")
+
+var president = Person(first: "Brack", last: "Obama", age: 54, job: Job(jobTitle: "President", jobSalary: 400000, hourly: false))
+var firstLady = Person(first: "Michelle", last: "Obama", age: 51, job: Job(jobTitle: "First Lady", jobSalary: 300000, hourly: false))
+president.spouse = firstLady
+firstLady.spouse = president
+print("\(president.toString())\n")
+print("\(firstLady.toString())\n")
 
 
+/*
+ * Family Class
+ */
 
-
-
-
-
+class famClass {
+    var fam : [Person]
+    
+    init(fam: [Person]) {
+        self.fam = fam
+    }
+    
+    func householdIncome() -> Double? {
+        var total : Double = 0
+        for person in self.fam {
+            if let employed = person.job {
+                if (employed.hourly) {
+                    total += employed.calculateIncome(hours: 2000)
+                } else {
+                    total += employed.salary
+                }
+            }
+        }
+        return total
+    }
+    
+    func haveChild(first f: String, last l: String) -> Void {
+        let kid = Person(first: f, last: l, age: 0)
+        
+        for person in fam {
+            if (person.age > 21) {
+                fam.append(kid)
+                break
+            }
+        }
+        print("No member is over the age of 21.\n")
+    }
+}
 
 
 
