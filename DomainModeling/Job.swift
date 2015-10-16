@@ -24,7 +24,7 @@ class Job {
     
     func calculateIncome(hours h : Double) -> Double {
         if (hourly) {
-            return h * salary
+            return salary * h
         } else {
             return salary
         }
