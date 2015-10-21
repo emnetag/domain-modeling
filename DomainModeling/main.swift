@@ -21,63 +21,20 @@ protocol CustomStringConvertible {
     var description : String { get }
 }
 
-struct Money: CustomStringConvertible {
-    var amount : Double  // internally stored as USD
-    var currency : Currency
-    
-    init(amount: Double, currency: Currency) {
-        self.amount = amount
-        self.currency = currency
-    }
-    
-    mutating func add(amount a: Double, currency c: Currency) -> Void {
-        // first convert to USD
-        let newAmount = converToDollar(a, currency: c)
-        self.amount += newAmount
-    }
-    
-    mutating func subtract(amount a: Double, currency c: Currency ) -> Void {
-        let newAmount = converToDollar(a, currency: c)
-        self.amount -= newAmount
-    }
-    
-    
-    mutating func getTotal() -> Double {
-        switch self.currency {
-            case .CAN:
-                return round(100 * (self.amount * 1.25)) / 100
-            case .GBP:
-                return round(100 * (self.amount * 0.5)) / 100
-            case .EUR:
-                return round(100 * (self.amount * 1.5)) / 100
-            default:
-                return round(100 * self.amount) / 100
-        }
-    }
-    
-    mutating func convert(type t: Currency) {
-        self.currency = t
-    }
-    
-    private func converToDollar(sum: Double, currency: Currency) -> Double {
-        switch currency {
-            case .CAN:
-                return sum * 0.8
-            case .GBP:
-                return sum * 2.0
-            case .EUR:
-                return sum * (2.0 / 3.0)
-            default: return sum
-        }
-    }
-    
-    //domain-modeling part 2
-    var description: String {return "\(self.currency)\(self.amount)"}
+protocol Mathematics {
+    func addition(left: Self, right: Self) -> Self
+    func subtraction(left: Self, right: Self) -> Self
 }
+
+/*
+ * Testing Money struct
+ */
 
 //domain-modeling part 2
 print("testing CustomStringConvertible\n")
+
 var moneys = Money(amount: 20, currency: .USD)
+
 print("\(moneys.description)")
 
 print("Money test cases...\n")
@@ -108,39 +65,8 @@ print("Spent 50 CAN, now I have \(wallet.getTotal()) CAN.\n")
 
 
 /*
- * JOB class
+ * Testing Job class
  */
-
-class Job: CustomStringConvertible {
-    
-    var title : String
-    
-    var salary : Double
-    
-    var hourly : Bool
-    
-    init(jobTitle : String, jobSalary : Double, hourly: Bool) {
-        self.title = jobTitle
-        self.salary = jobSalary
-        self.hourly = hourly
-    }
-    
-    func calculateIncome(hours h : Double = 0.0) -> Double {
-        if (hourly) {
-            return self.salary * h
-        } else {
-            return self.salary
-        }
-    }
-    
-    func raise(percentage: Double) -> Void {
-        self.salary *= 1 + (percentage / 100)
-    }
-    
-    //domain-modeling part 2
-    var description: String { return "Title: \(self.title)\nSalary: \(self.salary)\nHourly: \(self.hourly)" }
-    
-}
 
 print("\n")
 print("Testing Job class...\n")
@@ -160,47 +86,8 @@ print("testing CustomStringConvertible\n")
 print("\(job.description)\n")
 
 /*
- * Person class
+ * Testing person class
  */
-class Person: CustomStringConvertible {
-    var firstName : String
-    var lastName : String
-    var job : Job?
-    var age : Int
-    weak var spouse : Person?
-    
-    init(first : String, last: String, age: Int, job: Job? = nil, spouse: Person? = nil) {
-        self.firstName = first
-        self.lastName  = last
-        self.age = age
-        
-        // Cannot get married before age 18
-        if age < 18 {
-            self.spouse = nil
-        } else {
-            self.spouse = spouse
-        }
-        
-        // Cannot have a job before age 16
-        if age < 16 {
-            self.job = nil
-        } else {
-            self.job = job
-        }
-        
-    }
-    
-    func toString() -> String {
-        let position = self.job != nil ? self.job!.title : "unemployed"
-        let spouseInfo = self.spouse != nil ? "\(self.spouse!.firstName) \(self.spouse!.lastName)" : "not married"
-        let salary = self.job != nil ? self.job!.calculateIncome() : 0.0
-        return "\(self.firstName) \(self.lastName)\nAge: \(self.age) years\nSalary: \(salary) \nJob: \(position)\nSpouse: \(spouseInfo)"
-    }
-    
-    //domain-modeling part 2
-    var description : String { return toString() }
-}
-
 
 print("Testing Person class...\n")
 
@@ -217,46 +104,9 @@ print("\(firstLady.toString())\n\n\n")
 print("testing CustomStringConvertible\n")
 print("\(president.description)\n")
 
-
 /*
- * Family Class
+ * Testing family class
  */
-class famClass: CustomStringConvertible {
-    var fam : [Person] = []
-    
-    init?(fam: [Person]) {
-        for person in fam {
-            if person.age > 21 {
-                self.fam = fam
-                return
-            }
-        }
-        return nil
-    }
-    
-    func householdIncome() -> Double {
-        var total : Double = 0.0
-        for person in self.fam {
-            if let employed = person.job {
-                if (employed.hourly) {
-                    total += employed.calculateIncome(hours: 2000)
-                } else {
-                    total += employed.salary
-                }
-            }
-        }
-        return total
-    }
-    
-    func haveChild(first f: String, last l: String) -> Void {
-        let kid = Person(first: f, last: l, age: 0)
-        self.fam.append(kid)
-    }
-    
-    //domain-modeling part 2
-    var description: String { return "Family Name: \(self.fam[0].lastName)\nIncome: \(self.householdIncome())" }
-}
-
 
 print("Testing Fam class...\n")
 var firstFam = famClass(fam: [president, firstLady, malia])
