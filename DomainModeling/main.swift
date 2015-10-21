@@ -16,10 +16,15 @@ enum Currency {
     case EUR
 }
 
-struct Money {
+//domain-modeling part 2
+protocol CustomStringConvertible {
+    var description : String { get }
+}
+
+struct Money: CustomStringConvertible {
     var amount : Double  // internally stored as USD
     var currency : Currency
-
+    
     init(amount: Double, currency: Currency) {
         self.amount = amount
         self.currency = currency
@@ -65,7 +70,15 @@ struct Money {
             default: return sum
         }
     }
+    
+    //domain-modeling part 2
+    var description: String {return "\(self.currency)\(self.amount)"}
 }
+
+//domain-modeling part 2
+print("testing CustomStringConvertible\n")
+var moneys = Money(amount: 20, currency: .USD)
+print("\(moneys.description)")
 
 print("Money test cases...\n")
 var wallet = Money(amount: 20, currency: Currency.USD)
@@ -93,11 +106,12 @@ print("In Canadian dollars, I have \(wallet.getTotal()) dollars.\n")
 wallet.subtract(amount: 50, currency: .CAN)
 print("Spent 50 CAN, now I have \(wallet.getTotal()) CAN.\n")
 
+
 /*
  * JOB class
  */
 
-class Job {
+class Job: CustomStringConvertible {
     
     var title : String
     
@@ -122,6 +136,10 @@ class Job {
     func raise(percentage: Double) -> Void {
         self.salary *= 1 + (percentage / 100)
     }
+    
+    //domain-modeling part 2
+    var description: String { return "Title: \(self.title)\nSalary: \(self.salary)\nHourly: \(self.hourly)" }
+    
 }
 
 print("\n")
@@ -135,12 +153,16 @@ job.raise(15)
 print("Let's give him a 15% raise. He now makes \(job.calculateIncome()).\n")
 
 var hourlyEmp = Job(jobTitle: "Waitress", jobSalary: 15, hourly: true)
-print("A person that earns $15 an hour, makes roughly \(hourlyEmp.calculateIncome(hours: 2000)) in a year.\n\n\n")
+print("A person that earns $15 an hour, makes roughly \(hourlyEmp.calculateIncome(hours: 2000)) in a year.\n\n")
+
+//domain-modeling part 2
+print("testing CustomStringConvertible\n")
+print("\(job.description)\n")
 
 /*
  * Person class
  */
-class Person {
+class Person: CustomStringConvertible {
     var firstName : String
     var lastName : String
     var job : Job?
@@ -172,26 +194,34 @@ class Person {
         let position = self.job != nil ? self.job!.title : "unemployed"
         let spouseInfo = self.spouse != nil ? "\(self.spouse!.firstName) \(self.spouse!.lastName)" : "not married"
         let salary = self.job != nil ? self.job!.calculateIncome() : 0.0
-        return "\(self.firstName) \(self.lastName)\nAge: \(self.age) years\nSalary: \(salary) \nJob: \(position)\nSpouse:\(spouseInfo)"
+        return "\(self.firstName) \(self.lastName)\nAge: \(self.age) years\nSalary: \(salary) \nJob: \(position)\nSpouse: \(spouseInfo)"
     }
+    
+    //domain-modeling part 2
+    var description : String { return toString() }
 }
+
+
 print("Testing Person class...\n")
 
 var president = Person(first: "Brack", last: "Obama", age: 54, job: Job(jobTitle: "President", jobSalary: 400000, hourly: false))
 var firstLady = Person(first: "Michelle", last: "Obama", age: 51, job: Job(jobTitle: "First Lady", jobSalary: 300000, hourly: false))
-var malia = Person(first: "Malia", last: "Obama", age: 18)
+var malia = Person(first: "Malia", last: "Obama", age: 17)
 
 president.spouse = firstLady
 firstLady.spouse = president
 print("\(president.toString())\n")
 print("\(firstLady.toString())\n\n\n")
 
+//domain-modeling part 2
+print("testing CustomStringConvertible\n")
+print("\(president.description)\n")
+
 
 /*
  * Family Class
  */
-
-class famClass {
+class famClass: CustomStringConvertible {
     var fam : [Person] = []
     
     init?(fam: [Person]) {
@@ -222,6 +252,9 @@ class famClass {
         let kid = Person(first: f, last: l, age: 0)
         self.fam.append(kid)
     }
+    
+    //domain-modeling part 2
+    var description: String { return "Family Name: \(self.fam[0].lastName)\nIncome: \(self.householdIncome())" }
 }
 
 
@@ -248,7 +281,9 @@ if legalFam != nil {
     print("Illegal family.\n")
 }
 
-
+//domain-modeling part 2
+print("testing CustomStringConvertible\n")
+print("\(firstFam!.description)\n")
 
 
 
