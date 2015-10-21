@@ -26,6 +26,25 @@ protocol Mathematics {
     func subtraction(left: Self, right: Self) -> Self
 }
 
+extension Double {
+    func USD() -> Money {
+        return Money(amount: self, currency: .USD)
+    }
+    
+    func GBP() -> Money {
+        return Money(amount: self, currency: .GBP)
+    }
+    
+    func EUR() -> Money {
+        return Money(amount: self, currency: .EUR)
+    }
+    
+    func CAN() -> Money {
+        return Money(amount: self, currency: .CAN)
+    }
+}
+
+
 /*
  * Testing Money struct
  */
@@ -135,7 +154,15 @@ if legalFam != nil {
 print("testing CustomStringConvertible\n")
 print("\(firstFam!.description)\n")
 
-
+/*
+ * Testing Double extension
+ */
+print("Testing Double extension...")
+var twenty : Double = 20.0
+var twentyBucks = twenty.USD()
+print("USD: \(twentyBucks.description)")
+var pounds = twenty.GBP()
+print("GBP: \(pounds.description)")
 
 
 
